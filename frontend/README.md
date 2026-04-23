@@ -1,92 +1,128 @@
-# ATS Backend
+# 🚀 ScanHire AI – Ultimate ATS Optimizer
 
-A robust Node.js and Express-based backend for an **Applicant Tracking System (ATS)**. This service handles high-performance PDF parsing and web scraping to extract meaningful textual data from resumes and job descriptions.
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
-## 🚀 Features
+**ScanHire AI** is a state-of-the-art, AI-powered Applicant Tracking System (ATS) optimization tool. It helps job seekers "beat the algorithm" by analyzing their resumes against specific job descriptions, providing a realistic ATS score, identifying keyword gaps, and offering actionable insights to improve their application success rate.
 
-- **Resume Parsing**: Seamlessly extract text from PDF files via a dedicated API endpoint.
-- **Web Scraping**: Integrated with Puppeteer and Cheerio for advanced job description extraction (as indicated by dependencies).
-- **Serverless Ready**: Optimized for deployment as Vercel Serverless Functions.
-- **Cross-Origin Capability**: Pre-configured CORS support for easy frontend integration.
+---
 
-## 🛠️ Technology Stack
+## ✨ Core Features
 
-- **Runtime**: Node.js (ES Modules)
-- **Framework**: Express.js
-- **PDF Engine**: `pdf-parse`
-- **Automation**: `puppeteer`, `@sparticuz/chromium`
-- **Parsing**: `cheerio`, `axios`
-- **Deployment**: Vercel
+*   **🎯 AI-Powered ATS Scoring**: Get a realistic, strict compatibility score (0-100) based on enterprise-level ATS logic.
+*   **📄 Smart Resume Extraction**: Upload PDF resumes to automatically extract and clean text using advanced NLP.
+*   **🪄 AI Content Refinement**: Automatically fix formatting, remove extraction artifacts, and structure your resume text using **Puter AI**.
+*   **🛠️ JD Optimization**: Paste complex job descriptions and let AI extract the core responsibilities and required skills.
+*   **📊 Keyword Gap Analysis**: See exactly which skills you have and which ones you're missing compared to the job requirements.
+*   **💡 Actionable Insights**: Receive detailed feedback on strengths, weaknesses, and specific improvement suggestions.
+*   **🌈 Premium UI/UX**: A stunning, responsive interface with smooth animations, dark mode aesthetics, and micro-interactions.
 
-## ⚙️ Getting Started
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend Framework**: [Vite](https://vitejs.dev/) + [React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [Radix UI](https://www.radix-ui.com/) (Shadcn/UI)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **AI Integration**: [Puter.js](https://puter.com/) (Self-hosted/Browser AI)
+- **Database & Storage**: [Supabase](https://supabase.com/)
+- **Data Fetching**: [TanStack Query](https://tanstack.com/query) (React Query)
+- **Forms & Validation**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- **Node.js**: v18 or higher recommended.
-- **npm** or **yarn**.
+- [Node.js](https://nodejs.org/) (v18.0.0 or higher)
+- [npm](https://www.npmjs.com/) or [bun](https://bun.sh/)
+- A [Supabase](https://supabase.com/) project for file storage
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd ATS-BACKEND-main
-   ```
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-username/ATS-FRONTEND.git
+    cd ATS-FRONTEND
+    ```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    # or
+    bun install
+    ```
 
-### Running Locally
+3.  **Configure local environment**:
+    Create a `.env` file in the root directory and add the following:
+    ```env
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    VITE_BACKEND_URL=your_backend_api_url
+    ```
 
-To start the development server with hot-reloading:
+4.  **Start the development server**:
+    ```bash
+    npm run dev
+    # or
+    bun dev
+    ```
 
-```bash
-npm run dev
+5.  Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## 🧪 Testing
+
+The project includes both unit and end-to-end testing suites:
+
+- **Unit Tests (Vitest)**:
+  ```bash
+  npm run test
+  # or
+  npm run test:watch
+  ```
+
+- **E2E Tests (Playwright)**:
+  ```bash
+  npx playwright test
+  ```
+
+---
+
+## 📂 Project Structure
+
+```text
+src/
+├── components/   # UI components and layout logic
+│   ├── ui/       # Shared Shadcn/UI primitive components
+│   ├── Dashboard # Main application dashboard
+│   └── Landing   # Hero section and features showcase
+├── hooks/        # Custom React hooks
+├── lib/          # External library configurations (Supabase, etc.)
+├── pages/        # Application routes (Index, NotFound)
+└── App.tsx       # Root component and routing setup
 ```
 
-The server will be available at `http://localhost:5000`.
+---
 
-## 📡 API Reference
+## 🤖 AI Integration Note
 
-### Parse PDF
+This project leverages **Puter AI** for on-device/low-latency AI processing. Ensure that the `puter.js` script is correctly loaded (typically via CDN in `index.html`) to enable features like resume refinement and ATS analysis.
 
-Extract text contents from a publicly accessible PDF URL.
-
-- **URL**: `/api/parse`
-- **Method**: `POST`
-- **Body**:
-  ```json
-  {
-    "url": "https://example.com/resume.pdf"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "success": true,
-    "text": "Extracted text content..."
-  }
-  ```
-
-## 🌍 Environment Variables
-
-Create a `.env` file in the root directory and add the following:
-
-```env
-PORT=5000
-```
-
-## ☁️ Deployment
-
-This project is configured for one-click deployment to **Vercel**.
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Run: `vercel`
-
-The `vercel.json` file handles the mapping of the Express server to Vercel's serverless environment.
+---
 
 ## 📄 License
 
-This project is licensed under the ISC License.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<p align="center">
+  Built with ❤️ by the ScanHire AI Team
+</p>
