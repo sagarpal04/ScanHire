@@ -1,10 +1,8 @@
 # 🚀 ScanHire AI – Ultimate ATS Optimizer
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
 **ScanHire AI** is a state-of-the-art, AI-powered Applicant Tracking System (ATS) optimization tool. It helps job seekers "beat the algorithm" by analyzing their resumes against specific job descriptions, providing a realistic ATS score, identifying keyword gaps, and offering actionable insights to improve their application success rate.
 
