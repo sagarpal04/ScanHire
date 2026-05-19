@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@napi-rs/canvas": "^0.1.80",
     "@sparticuz/chromium": "^143.0.4",
     "axios": "^1.13.6",

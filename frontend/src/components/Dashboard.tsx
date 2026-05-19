@@ -21,15 +21,29 @@ interface DashboardProps {
   onBack: () => void;
 }
 
-declare global {
-  interface Window {
-    puter: {
-      ai: {
-        chat: (prompt: string) => Promise<any>;
-      };
-    };
+const backendURL = import.meta.env.VITE_BACKEND_URL || "";
+
+const callGeminiAI = async (prompt: string): Promise<string> => {
+  const response = await fetch(`${backendURL}/api/ai`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prompt }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
   }
-}
+
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error(result.error || "AI generation failed");
+  }
+
+  return result.text;
+};
 
 export default function Dashboard({ onBack }: DashboardProps) {
   const backendURL = import.meta.env.VITE_BACKEND_URL || "";
@@ -46,103 +60,6 @@ export default function Dashboard({ onBack }: DashboardProps) {
   const [loading, setLoading] = useState(false);
   const [uploadDragOver, setUploadDragOver] = useState(false);
 
-  // const handleUpload = async () => {
-  //   try {
-  //     if (!file) { alert("Select a file"); return; }
-  //     setLoading(true);
-  //     setOutput("");
-
-  //     const { supabase } = await import("../lib/supabase");
-
-  //     const filePath = `uploads/${Date.now()}-${file.name}`;
-  //     const { data, error } = await supabase.storage.from("resumes").upload(filePath, file, { upsert: true });
-  //     if (error) { alert("Upload Error: " + error.message); setLoading(false); return; }
-
-  //     const { data: publicUrl } = supabase.storage.from("resumes").getPublicUrl(data.path);
-  //     setUrl(publicUrl.publicUrl);
-
-  //     const parseResponse = await fetch(`${backendURL}/api/parse`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ url: publicUrl.publicUrl }),
-  //     });
-  //     const result = await parseResponse.json();
-
-  //     if (result.success) {
-  //       console.log(result.text)
-  //       const rawText = result.text;
-  //       const prompt = `Please fix any messy formatting, line-break artifacts, or PDF extraction errors from the following Resume text.\nExtract ONLY the actual resume content (Contact Info, Experience, Education, Skills, Projects).\nDo not summarize it. Do not remove any valid skills or experience. Return ONLY the clean, structured text.\n\nRAW RESUME TEXT:\n${rawText}`;
-  //       try {
-  //         const aiResponse = await window.puter.ai.chat(prompt);
-  //         const cleaned = aiResponse?.message?.content || aiResponse?.content || (typeof aiResponse === "string" ? aiResponse : JSON.stringify(aiResponse, null, 2));
-  //         setResume(cleaned.trim());
-  //       } catch {
-  //         setResume(rawText);
-  //       }
-  //     } else {
-  //       alert("Parse Error: " + result.error);
-  //     }
-  //     setLoading(false);
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     alert("Something went wrong");
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleScrapeJD = async () => {
-  //   if (!jdUrl.trim()) { setJdError("Please enter a job posting URL."); return; }
-  //   setJdLoading(true);
-  //   setJdError("");
-  //   setJd("");
-
-  //   try {
-  //     const response = await fetch(`${backendURL}/api/scrape-jd`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ url: jdUrl.trim() }),
-  //     });
-  //     const result = await response.json();
-
-  //     if (result.success) {
-  //       const rawJd = result.text;
-  //       const prompt = `Extract only the core Job Description, Responsibilities, and Qualifications from the following text.\nRemove all website navigation links, company footers, headers, privacy policies, unrelated jobs, and filler text.\nReturn ONLY the pristine job description text.\n\nRAW TEXT:\n${rawJd}`;
-  //       try {
-  //         const aiResponse = await window.puter.ai.chat(prompt);
-  //         const cleaned = aiResponse?.message?.content || aiResponse?.content || (typeof aiResponse === "string" ? aiResponse : JSON.stringify(aiResponse, null, 2));
-  //         setJd(cleaned.trim());
-  //       } catch {
-  //         setJd(rawJd);
-  //       }
-  //       setJdUrl("");
-  //     } else {
-  //       setJdError("Scrape failed: " + (result.error || "Unknown error"));
-  //     }
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     setJdError("Network error: " + err.message);
-  //   }
-  //   setJdLoading(false);
-  // };
-
-  // const analyze = async () => {
-  //   if (loading) return;
-  //   if (!resume || !jd) { setOutput("Please provide Resume and Job Description"); return; }
-  //   setLoading(true);
-  //   setOutput("Analyzing...");
-  //   setActiveTab("analysis");
-
-  //   const prompt = `You are an advanced ATS Resume Analyzer.\nCompare the RESUME and JOB DESCRIPTION.\nReturn output in STRICT FORMAT:\n1. ATS Score (0-100)\n2. Matching Skills\n3. Missing Skills\n4. Keyword Match %\n5. Strengths\n6. Weaknesses\n7. Improvement Suggestions\n\nIMPORTANT:\n- Be strict like real ATS\n- Focus on ML, NLP, Python, C++, HTML, Data Extraction\n\nRESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jd}`;
-
-  //   try {
-  //     const response = await window.puter.ai.chat(prompt);
-  //     const text = response?.message?.content || response?.content || JSON.stringify(response, null, 2);
-  //     setOutput(text);
-  //   } catch (err: any) {
-  //     setOutput("Error: " + err.message);
-  //   }
-  //   setLoading(false);
-  // };
   const handleUpload = async () => {
     console.log("🚀 handleUpload triggered");
 
@@ -205,26 +122,16 @@ export default function Dashboard({ onBack }: DashboardProps) {
 
         const rawText = result.text;
 
-        const prompt = `Please fix any messy formatting... \n\nRAW RESUME TEXT:\n${rawText}`;
+        const prompt = `Please fix any messy formatting, line-break artifacts, or PDF extraction errors from the following Resume text.\nExtract ONLY the actual resume content (Contact Info, Experience, Education, Skills, Projects).\nDo not summarize it. Do not remove any valid skills or experience. Return ONLY the clean, structured text.\n\nRAW RESUME TEXT:\n${rawText}`;
 
         try {
-          console.log("🤖 Sending to AI...");
-          const aiResponse = await window.puter.ai.chat(prompt);
-
-          console.log("🤖 AI raw response:", aiResponse);
-
-          const cleaned =
-            aiResponse?.message?.content ||
-            aiResponse?.content ||
-            (typeof aiResponse === "string"
-              ? aiResponse
-              : JSON.stringify(aiResponse, null, 2));
-
+          console.log("🤖 Sending to Gemini AI...");
+          const cleaned = await callGeminiAI(prompt);
           console.log("✨ Cleaned Resume:", cleaned);
-
           setResume(cleaned.trim());
-        } catch (aiError) {
+        } catch (aiError: any) {
           console.error("❌ AI Error:", aiError);
+          alert(aiError.message || "AI Refinement failed");
           setResume(rawText);
         }
       } else {
@@ -245,11 +152,11 @@ export default function Dashboard({ onBack }: DashboardProps) {
     setIsJdRefining(true);
     try {
       const prompt = `Extract only the core Job Description, Responsibilities, and Qualifications from the following text.\nRemove all website navigation links, company footers, headers, privacy policies, unrelated jobs, and filler text.\nReturn ONLY the pristine job description text.\n\nRAW TEXT:\n${jd}`;
-      const aiResponse = await window.puter.ai.chat(prompt);
-      const cleaned = aiResponse?.message?.content || aiResponse?.content || (typeof aiResponse === "string" ? aiResponse : JSON.stringify(aiResponse, null, 2));
+      const cleaned = await callGeminiAI(prompt);
       setJd(cleaned.trim());
-    } catch (err) {
+    } catch (err: any) {
       console.error("JD Refine Error:", err);
+      alert(err.message || "AI JD Refinement failed");
     } finally {
       setIsJdRefining(false);
     }
@@ -260,11 +167,11 @@ export default function Dashboard({ onBack }: DashboardProps) {
     setIsResumeRefining(true);
     try {
       const prompt = `Please fix any messy formatting, line-break artifacts, or PDF extraction errors from the following Resume text.\nExtract ONLY the actual resume content (Contact Info, Experience, Education, Skills, Projects).\nDo not summarize it. Do not remove any valid skills or experience. Return ONLY the clean, structured text.\n\nRAW RESUME TEXT:\n${resume}`;
-      const aiResponse = await window.puter.ai.chat(prompt);
-      const cleaned = aiResponse?.message?.content || aiResponse?.content || (typeof aiResponse === "string" ? aiResponse : JSON.stringify(aiResponse, null, 2));
+      const cleaned = await callGeminiAI(prompt);
       setResume(cleaned.trim());
-    } catch (err) {
+    } catch (err: any) {
       console.error("Resume Refine Error:", err);
+      alert(err.message || "AI Resume Refinement failed");
     } finally {
       setIsResumeRefining(false);
     }
@@ -333,16 +240,9 @@ JOB DESCRIPTION:
 ${jd}
 `;
 
-      console.log("🤖 Sending request to Puter AI...");
+      console.log("🤖 Sending request to Gemini AI...");
 
-      const response = await window.puter.ai.chat(prompt);
-
-      console.log("📦 Raw Response:", response);
-
-      const text =
-        response?.message?.content ||
-        response?.content ||
-        (typeof response === "string" ? response : JSON.stringify(response, null, 2));
+      const text = await callGeminiAI(prompt);
 
       console.log("✅ Parsed Output:", text);
 
